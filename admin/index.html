@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heryn CRM — Leads</title>
+<link rel="icon" href="/assets/logo.png">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <img src="/assets/logo.png" alt="Heryn">
+    <h1>Heryn CRM</h1>
+    <div class="field"><label>Email</label><input id="loginEmail" type="email" autocomplete="username"></div>
+    <div class="field"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
+    <button class="btn-primary" id="loginBtn">Entrar</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="topbar">
+    <div class="brand"><img src="/assets/logo.png" alt="Heryn"><h1>Leads Heryn</h1></div>
+    <div class="actions">
+      <button class="btn-ghost" id="logoutBtn">Sair</button>
+    </div>
+  </div>
+  <div class="board" id="board"></div>
+</div>
+
+<!-- Lead modal -->
+<div class="modal-overlay" id="leadModalOverlay">
+  <div class="modal">
+    <button class="close-x" id="leadModalClose">&times;</button>
+    <h2 id="leadModalName">Lead</h2>
+    <div class="company-sub" id="leadModalCompany"></div>
+    <div class="info-grid">
+      <div class="info-item"><label>WhatsApp</label><div class="value"><a class="wa-link" id="leadWaLink" href="#" target="_blank" rel="noopener"></a></div></div>
+      <div class="info-item"><label>Origem</label><div class="value" id="leadSource"></div></div>
+      <div class="info-item"><label>Ramo</label><div class="value" id="leadSegment"></div></div>
+      <div class="info-item"><label>Faturamento</label><div class="value" id="leadRevenue"></div></div>
+      <div class="info-item full"><label>Tráfego pago</label><div class="value" id="leadPaidTraffic"></div></div>
+    </div>
+    <div class="field"><label>Etapa</label><select id="leadStage"></select></div>
+    <div class="field">
+      <label>Anotações</label>
+      <div class="notes-list" id="notesList"></div>
+      <div style="display:flex; gap:8px;">
+        <input id="noteInput" placeholder="Adicionar anotação...">
+        <button class="btn-ghost" id="addNoteBtn">Add</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-danger" id="deleteLeadBtn">Excluir lead</button>
+      <button class="btn-primary" id="saveStageBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/admin/admin.js"></script>
+</body>
+</html>
