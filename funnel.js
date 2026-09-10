@@ -1,5 +1,5 @@
 import { firebaseConfig } from '/firebase-config.js';
-import { SEGMENTS, REVENUE_RANGES, PAID_TRAFFIC_OPTIONS, WHATSAPP_NUMBER } from '/constants.js';
+import { SEGMENTS, REVENUE_RANGES, PAID_TRAFFIC_OPTIONS } from '/constants.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
@@ -121,15 +121,18 @@ function goBack() {
 }
 
 function transition(dir, cb) {
-  container.classList.add(dir === 1 ? 'leave-left' : 'leave-right');
-  setTimeout(() => {
-    cb();
-    container.classList.remove('leave-left', 'leave-right');
-    container.classList.add(dir === 1 ? 'enter-right' : 'enter-left');
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      container.classList.remove('enter-right', 'enter-left');
-    }));
-  }, 260);
+  return new Promise(resolve => {
+    container.classList.add(dir === 1 ? 'leave-left' : 'leave-right');
+    setTimeout(() => {
+      cb();
+      container.classList.remove('leave-left', 'leave-right');
+      container.classList.add(dir === 1 ? 'enter-right' : 'enter-left');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        container.classList.remove('enter-right', 'enter-left');
+        resolve();
+      }));
+    }, 260);
+  });
 }
 
 backBtn.addEventListener('click', goBack);
@@ -137,11 +140,11 @@ backBtn.addEventListener('click', goBack);
 async function submitLead() {
   if (submitting) return;
   submitting = true;
-  transition(1, () => {
-    container.innerHTML = `<div class="eyebrow">Quase lá</div><h1 class="headline">Enviando suas respostas...</h1>`;
-  });
   backBtn.hidden = true;
   progressFill.style.width = '100%';
+  await transition(1, () => {
+    container.innerHTML = `<div class="eyebrow">Quase lá</div><h1 class="headline">Enviando suas respostas...</h1>`;
+  });
   try {
     const write = addDoc(collection(db, 'leads'), {
       name: answers.name,
@@ -166,13 +169,11 @@ async function submitLead() {
 }
 
 function showDone() {
-  const waText = encodeURIComponent(`Olá! Acabei de preencher o formulário da Heryn (${answers.company}). Quero saber mais.`);
   container.innerHTML = `
     <div class="done-screen">
       <div class="check">&#10003;</div>
       <h1 class="headline">Recebemos seu <span class="accent">diagnóstico</span></h1>
-      <p>Nosso time vai analisar suas respostas e chamar você no WhatsApp em breve. Se quiser adiantar, é só chamar a gente agora.</p>
-      <a class="wa-btn" href="https://wa.me/${WHATSAPP_NUMBER}?text=${waText}" target="_blank" rel="noopener">Falar agora no WhatsApp</a>
+      <p>Nosso time vai analisar suas respostas e chamar você no WhatsApp em breve.</p>
     </div>
   `;
 }

@@ -28,5 +28,3 @@ export const PAID_TRAFFIC_OPTIONS = [
 ];
 
 export const STAGES = ['Novo', 'Contatado', 'Qualificado', 'Negociando', 'Ganho', 'Perdido'];
-
-export const WHATSAPP_NUMBER = '554792772323';
