@@ -184,6 +184,42 @@ body {
   font-family: inherit;
 }
 
+.slot-day { margin-bottom: 18px; }
+.slot-day-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.slot-hours { display: flex; flex-wrap: wrap; gap: 8px; }
+.slot-btn {
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.slot-btn:hover { border-color: #ec9f2e; transform: translateY(-1px); }
+
+.btn-skip {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px 0;
+}
+.btn-skip:hover { color: var(--text); }
+
+.meeting-confirmed { color: var(--text) !important; margin-bottom: 18px; }
+
 .done-screen { text-align: center; }
 .done-screen .check {
   width: 64px; height: 64px; border-radius: 50%;

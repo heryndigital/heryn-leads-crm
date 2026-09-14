@@ -28,3 +28,5 @@ export const PAID_TRAFFIC_OPTIONS = [
 ];
 
 export const STAGES = ['Novo', 'Contatado', 'Qualificado', 'Negociando', 'Ganho', 'Perdido'];
+
+export const MEETING_DAYS_AHEAD = 14;

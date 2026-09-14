@@ -108,7 +108,11 @@ function renderCard(lead) {
     <div class="name">${escapeHtml(lead.name)}</div>
     <div class="company">${escapeHtml(lead.company || '')}</div>
     <div class="meta"><span>${escapeHtml(lead.whatsapp || '')}</span><span>${timeAgo(lead.createdAt)}</span></div>
-    <div class="tags"><span class="tag">${escapeHtml(lead.segment || '')}</span><span class="tag">${escapeHtml(lead.revenueRange || '')}</span></div>
+    <div class="tags">
+      <span class="tag">${escapeHtml(lead.segment || '')}</span>
+      <span class="tag">${escapeHtml(lead.revenueRange || '')}</span>
+      ${lead.meetingAt ? `<span class="tag tag-meeting">${formatMeetingLabel(lead.meetingAt)}</span>` : ''}
+    </div>
   `;
   card.addEventListener('dragstart', e => { card.classList.add('dragging'); e.dataTransfer.setData('text/plain', lead.id); });
   card.addEventListener('dragend', () => card.classList.remove('dragging'));
@@ -134,9 +138,21 @@ function fillModal(lead) {
   document.getElementById('leadSegment').textContent = lead.segment || '-';
   document.getElementById('leadRevenue').textContent = lead.revenueRange || '-';
   document.getElementById('leadPaidTraffic').textContent = lead.paidTraffic || '-';
+  const meetingRow = document.getElementById('leadMeetingRow');
+  meetingRow.hidden = !lead.meetingAt;
+  if (lead.meetingAt) document.getElementById('leadMeeting').textContent = formatMeetingLabel(lead.meetingAt);
   const stageSelect = document.getElementById('leadStage');
   stageSelect.innerHTML = STAGES.map(s => `<option value="${s}" ${s === lead.stage ? 'selected' : ''}>${s}</option>`).join('');
   renderNotes(lead);
+}
+
+function formatMeetingLabel(meetingAt) {
+  const [datePart, timePart] = meetingAt.split('T');
+  const [y, m, d] = datePart.split('-').map(Number);
+  const hour = timePart ? timePart.slice(0, 2) : '';
+  const date = new Date(y, m - 1, d);
+  const weekday = date.toLocaleDateString('pt-BR', { weekday: 'long' });
+  return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}, ${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')} às ${hour}h`;
 }
 
 function renderNotes(lead) {
