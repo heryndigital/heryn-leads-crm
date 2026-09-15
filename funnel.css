@@ -184,46 +184,6 @@ body {
   font-family: inherit;
 }
 
-.field { margin-bottom: 16px; text-align: left; }
-.field label {
-  display: block;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-bottom: 6px;
-  font-weight: 700;
-}
-.field select {
-  width: 100%;
-  background: var(--panel);
-  border: 1.5px solid var(--border);
-  color: var(--text);
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-family: 'Manrope', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-.field select:focus { outline: none; border-color: #ec9f2e; }
-.field select:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.btn-skip {
-  background: transparent;
-  border: none;
-  color: var(--muted);
-  font-family: 'Manrope', sans-serif;
-  font-size: 13px;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 8px 0;
-}
-.btn-skip:hover { color: var(--text); }
-
-.meeting-confirmed { color: var(--text) !important; margin-bottom: 18px; }
-
 .done-screen { text-align: center; }
 .done-screen .check {
   width: 64px; height: 64px; border-radius: 50%;
