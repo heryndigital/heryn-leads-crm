@@ -158,13 +158,13 @@ async function renderSchedule() {
     const res = await fetch(`${SCHEDULER_URL}?action=availability&days=${MEETING_DAYS_AHEAD}`);
     if (!res.ok) throw new Error('bad response');
     const data = await res.json();
-    renderSlots(data.slots || []);
+    renderSlotFields(data.slots || []);
   } catch (e) {
     document.getElementById('slotsArea').innerHTML = '<p class="hint error">Não consegui carregar os horários agora. Sem problema, você pode combinar por WhatsApp.</p>';
   }
 }
 
-function renderSlots(slots) {
+function renderSlotFields(slots) {
   const area = document.getElementById('slotsArea');
   if (!slots.length) {
     area.innerHTML = '<p class="hint">Sem horários disponíveis nos próximos dias — pode combinar por WhatsApp.</p>';
@@ -173,16 +173,44 @@ function renderSlots(slots) {
   const byDate = {};
   slots.forEach(s => { (byDate[s.date] = byDate[s.date] || []).push(s.hour); });
   const dates = Object.keys(byDate).sort();
-  area.innerHTML = dates.map(d => `
-    <div class="slot-day">
-      <div class="slot-day-label">${formatDateLabel(d)}</div>
-      <div class="slot-hours">
-        ${byDate[d].map(h => `<button class="slot-btn" data-date="${d}" data-hour="${h}">${h}h</button>`).join('')}
-      </div>
+
+  area.innerHTML = `
+    <div class="field">
+      <label>Dia</label>
+      <select id="dayField">
+        <option value="" disabled selected>Escolha o dia</option>
+        ${dates.map(d => `<option value="${d}">${formatDateLabel(d)}</option>`).join('')}
+      </select>
     </div>
-  `).join('');
-  area.querySelectorAll('.slot-btn').forEach(btn => {
-    btn.addEventListener('click', () => selectSlot(btn.dataset.date, parseInt(btn.dataset.hour, 10)));
+    <div class="field">
+      <label>Horário</label>
+      <select id="hourField" disabled>
+        <option value="" disabled selected>Escolha o dia primeiro</option>
+      </select>
+    </div>
+    <div class="actions">
+      <button class="btn-continue" id="confirmSlotBtn" disabled>Confirmar horário</button>
+    </div>
+  `;
+
+  const dayField = document.getElementById('dayField');
+  const hourField = document.getElementById('hourField');
+  const confirmBtn = document.getElementById('confirmSlotBtn');
+
+  dayField.addEventListener('change', () => {
+    const hours = (byDate[dayField.value] || []).slice().sort((a, b) => a - b);
+    hourField.innerHTML = `<option value="" disabled selected>Escolha o horário</option>` +
+      hours.map(h => `<option value="${h}">${h}h</option>`).join('');
+    hourField.disabled = false;
+    confirmBtn.disabled = true;
+  });
+
+  hourField.addEventListener('change', () => {
+    confirmBtn.disabled = !hourField.value;
+  });
+
+  confirmBtn.addEventListener('click', () => {
+    selectSlot(dayField.value, parseInt(hourField.value, 10));
   });
 }
 
