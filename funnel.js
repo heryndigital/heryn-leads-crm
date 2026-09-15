@@ -143,6 +143,19 @@ function transition(dir, cb) {
 
 backBtn.addEventListener('click', goBack);
 
+let availabilityPromise = null;
+
+function fetchAvailability() {
+  availabilityPromise = fetch(`${SCHEDULER_URL}?action=availability&days=${MEETING_DAYS_AHEAD}`)
+    .then(res => { if (!res.ok) throw new Error('bad response'); return res.json(); });
+  return availabilityPromise;
+}
+
+// Começa a buscar os horários assim que o formulário abre, em segundo plano —
+// enquanto a pessoa responde as 6 primeiras perguntas, a busca já roda ao fundo,
+// então quando ela chega na pergunta 7 os horários já devem estar prontos.
+fetchAvailability();
+
 async function renderSchedule() {
   updateProgress();
   container.innerHTML = `
@@ -155,9 +168,7 @@ async function renderSchedule() {
   `;
   document.getElementById('skipScheduleBtn').addEventListener('click', () => finalizeLead(null));
   try {
-    const res = await fetch(`${SCHEDULER_URL}?action=availability&days=${MEETING_DAYS_AHEAD}`);
-    if (!res.ok) throw new Error('bad response');
-    const data = await res.json();
+    const data = await (availabilityPromise || fetchAvailability());
     renderSlotFields(data.slots || []);
   } catch (e) {
     document.getElementById('slotsArea').innerHTML = '<p class="hint error">Não consegui carregar os horários agora. Sem problema, você pode combinar por WhatsApp.</p>';
