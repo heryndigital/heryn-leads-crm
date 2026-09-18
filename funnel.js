@@ -142,9 +142,15 @@ async function submitLead() {
   submitting = true;
   backBtn.hidden = true;
   progressFill.style.width = '100%';
-  await transition(1, () => {
-    container.innerHTML = `<div class="eyebrow">Quase lá</div><h1 class="headline">Enviando suas respostas...</h1>`;
-  });
+  // A troca de tela usa requestAnimationFrame, que pode nunca disparar se a aba
+  // estiver em segundo plano (ex: pessoa trocou de app no celular nesse instante).
+  // Por isso essa espera tem um limite curto — nunca deve travar o envio de verdade.
+  await Promise.race([
+    transition(1, () => {
+      container.innerHTML = `<div class="eyebrow">Quase lá</div><h1 class="headline">Enviando suas respostas...</h1>`;
+    }),
+    new Promise(resolve => setTimeout(resolve, 500))
+  ]);
   try {
     const write = addDoc(collection(db, 'leads'), {
       name: answers.name,
