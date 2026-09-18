@@ -30,3 +30,8 @@ export const PAID_TRAFFIC_OPTIONS = [
 export const STAGES = ['Novo', 'Contatado', 'Qualificado', 'Negociando', 'Ganho', 'Perdido'];
 
 export const MEETING_DAYS_AHEAD = 14;
+
+// Tópico do ntfy.sh usado pra avisar o celular quando cai um lead novo.
+// Mantenha esse nome "obscuro" (não é senha, mas quem souber esse nome consegue
+// se inscrever nas notificações) — veja README-NOTIFICACOES.md.
+export const NTFY_TOPIC = 'heryn-leads-d8110e2b08';

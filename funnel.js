@@ -1,5 +1,5 @@
 import { firebaseConfig } from '/firebase-config.js';
-import { SEGMENTS, REVENUE_RANGES, PAID_TRAFFIC_OPTIONS } from '/constants.js';
+import { SEGMENTS, REVENUE_RANGES, PAID_TRAFFIC_OPTIONS, NTFY_TOPIC } from '/constants.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
@@ -161,11 +161,33 @@ async function submitLead() {
     });
     const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
     await Promise.race([write, timeout]);
+    notifyPhone();
     showDone();
   } catch (e) {
     container.innerHTML = `<div class="eyebrow">Ops</div><h1 class="headline">Não deu pra enviar agora</h1><p class="hint error">Tenta de novo em alguns segundos.</p><div class="actions"><button class="btn-continue" id="retryBtn">Tentar novamente</button></div>`;
     document.getElementById('retryBtn').addEventListener('click', () => { submitting = false; submitLead(); });
   }
+}
+
+function notifyPhone() {
+  // Nome/empresa vão no corpo (texto livre em UTF-8), não no cabeçalho —
+  // cabeçalhos HTTP não aceitam com segurança certos acentos/caracteres.
+  const body = [
+    'Nome: ' + (answers.name || '-'),
+    'Empresa: ' + (answers.company || '-'),
+    'WhatsApp: ' + (answers.whatsapp || '-'),
+    'Ramo: ' + (answers.segment || '-'),
+    'Faturamento: ' + (answers.revenueRange || '-')
+  ].join('\n');
+  fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+    method: 'POST',
+    body: body,
+    headers: {
+      'Title': 'Novo lead recebido',
+      'Tags': 'moneybag',
+      'Priority': 'high'
+    }
+  }).catch(() => { /* aviso é best-effort — nunca deve travar o envio do lead */ });
 }
 
 function showDone() {
